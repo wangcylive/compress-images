@@ -1,0 +1,33 @@
+{
+  "name": "compressed images",
+  "version": "1.0.0",
+  "totalSourceFileSize": 1701965,
+  "totalCompressedFileSize": 1684069,
+  "compressionRatio": 0.01,
+  "compressedList": [
+    {
+      "sourcePath": "assets/icon.png",
+      "uncompressed": 24343,
+      "compressed": 8095,
+      "ratio": 0.66
+    },
+    {
+      "sourcePath": "assets/ico_refrash@3x.png",
+      "uncompressed": 1057,
+      "compressed": 619,
+      "ratio": 0.41
+    },
+    {
+      "sourcePath": "assets/icon-close.png",
+      "uncompressed": 625,
+      "compressed": 511,
+      "ratio": 0.18
+    },
+    {
+      "sourcePath": "assets/fef4eadd191c3461054ca60cde8576db1590566398.jpg",
+      "uncompressed": 1675940,
+      "compressed": 1674844,
+      "ratio": 0
+    }
+  ]
+}
