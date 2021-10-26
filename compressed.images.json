@@ -1,33 +1,51 @@
 {
   "name": "compressed images",
   "version": "1.0.0",
-  "totalSourceFileSize": 1701965,
-  "totalCompressedFileSize": 1684069,
-  "compressionRatio": 0.01,
+  "totalSourceFileSize": 3643999,
+  "totalCompressedFileSize": 446084,
+  "compressionRatio": 0.8775,
   "compressedList": [
     {
-      "sourcePath": "assets/icon.png",
-      "uncompressed": 24343,
-      "compressed": 8095,
-      "ratio": 0.66
+      "sourcePath": "src/135091055349.jpg",
+      "uncompressed": 545033,
+      "compressed": 43862,
+      "ratio": 0.9195
     },
     {
-      "sourcePath": "assets/ico_refrash@3x.png",
-      "uncompressed": 1057,
-      "compressed": 619,
-      "ratio": 0.41
+      "sourcePath": "src/1350912236802.jpg",
+      "uncompressed": 561116,
+      "compressed": 62670,
+      "ratio": 0.8883
     },
     {
-      "sourcePath": "assets/icon-close.png",
-      "uncompressed": 625,
-      "compressed": 511,
-      "ratio": 0.18
+      "sourcePath": "src/1351068302550.jpg",
+      "uncompressed": 512472,
+      "compressed": 67089,
+      "ratio": 0.869
     },
     {
-      "sourcePath": "assets/fef4eadd191c3461054ca60cde8576db1590566398.jpg",
-      "uncompressed": 1675940,
-      "compressed": 1674844,
-      "ratio": 0
+      "sourcePath": "src/1351068491231.jpg",
+      "uncompressed": 488950,
+      "compressed": 64020,
+      "ratio": 0.869
+    },
+    {
+      "sourcePath": "src/1385453784203.jpg",
+      "uncompressed": 527318,
+      "compressed": 70157,
+      "ratio": 0.8669
+    },
+    {
+      "sourcePath": "src/1351068419842.jpg",
+      "uncompressed": 489315,
+      "compressed": 65752,
+      "ratio": 0.8656
+    },
+    {
+      "sourcePath": "src/1351067833539.jpg",
+      "uncompressed": 519795,
+      "compressed": 72534,
+      "ratio": 0.8604
     }
   ]
 }

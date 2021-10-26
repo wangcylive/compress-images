@@ -1,9 +1,10 @@
 import imagemin from 'imagemin'
 import imageminJpegtran from'imagemin-jpegtran'
+import imageminJpegRecompress from 'imagemin-jpeg-recompress'
 import imageminPngquant from 'imagemin-pngquant'
 import fs from 'fs'
 import fsp from 'fs/promises'
-import * as path from 'path'
+import path from 'path'
 
 const compressedImagesJsonPath = 'compressed.images.json'
 
@@ -24,24 +25,26 @@ function setCompressImageJson(data) {
   return fsp.writeFile(compressedImagesJsonPath, JSON.stringify(data, null, 2), 'utf-8')
 }
 
-function mkdirs(dirname, callback) {
-  fs.access(dirname, (err) => {
-    if (!err) {
-      callback()
-    } else {
-      mkdirs(path.dirname(dirname), () => {
-        fs.mkdir(dirname, callback)
+// 创建文件夹目录
+function mkdirsPromise(dirname) {
+  return new Promise((resolve) => {
+    const mkdirs = (dirname, callback) => {
+      fs.access(dirname, (err) => {
+        if (!err) {
+          callback()
+        } else {
+          mkdirs(path.dirname(dirname), () => {
+            fs.mkdir(dirname, callback)
+          })
+        }
       })
     }
+    mkdirs(dirname, resolve)
   })
 }
 
-mkdirs('a/b/c', () => {
-  console.log('1')
-})
-
 /**
- * 计算压缩比例，保留两位小数点
+ * 计算压缩比例，保留4位小数点
  * @param compressed
  * @param uncompressed
  * @return {number}
@@ -50,7 +53,7 @@ function getCompressionRatio(compressed, uncompressed) {
   if (uncompressed === 0) {
     return 0
   }
-  return Math.floor((1 - compressed / uncompressed) * 100) / 100
+  return Math.floor((1 - compressed / uncompressed) * 1e4) / 1e4
 }
 
 function formatFileSize (value) {
@@ -62,7 +65,7 @@ function formatFileSize (value) {
 }
 
 function consoleColor(text) {
-  return `\x1b[37;44;1m${text}\x1b[0m`
+  return `\x1b[31m${text}\x1b[0m`
 }
 
 // 过滤不存的文件
@@ -79,10 +82,14 @@ function findNotExistent(compressedList) {
 }
 
 async function startCompress() {
-  const files = await imagemin(['assets/**/*.{jpg,jpeg,png}'], {
+  const files = await imagemin(['src/**/*.{jpg,jpeg,png}'], {
     // destination: 'build/images',
     plugins: [
-      imageminJpegtran(),
+      imageminJpegRecompress({
+        target: 0.8,
+        min: 60,
+        max: 80,
+      }),
       imageminPngquant({
         quality: [0.6, 0.8]
       })
@@ -94,7 +101,6 @@ async function startCompress() {
   // 过滤掉不存在的文件
   const compressedList = localData.compressedList || []
   const notExistent = await findNotExistent(compressedList)
-  console.log(notExistent)
   if (notExistent.length > 0) {
     for (let i = compressedList.length - 1; i >= 0; i--) {
       if (notExistent.includes(compressedList[i].sourcePath)) {
@@ -128,8 +134,11 @@ async function startCompress() {
             compressed: data.byteLength,
             ratio: getCompressionRatio(data.byteLength, stat.size)
           })
+          // 备份原图片
+          await mkdirsPromise(path.join('bak_images', path.dirname(sourcePath)))
+          await fsp.rename(sourcePath, path.join('bak_images', sourcePath))
           await fsp.writeFile(sourcePath, data).catch(err => {
-            console.log('compress error', sourcePath, err)
+            console.error('compress error', sourcePath, err)
           })
         }
         resolve()
@@ -169,7 +178,7 @@ async function startCompress() {
   })
 }
 
-// startCompress()
+startCompress()
 
 // fsp.rename('./assets/ico_refrash@3x.png', './build/ico_refrash@3x.png').then(res => {
 //   console.log(res)
