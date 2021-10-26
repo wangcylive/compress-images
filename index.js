@@ -1,7 +1,9 @@
 import imagemin from 'imagemin'
 import imageminJpegtran from'imagemin-jpegtran'
 import imageminPngquant from 'imagemin-pngquant'
+import fs from 'fs'
 import fsp from 'fs/promises'
+import * as path from 'path'
 
 const compressedImagesJsonPath = 'compressed.images.json'
 
@@ -21,6 +23,22 @@ function getCompressImageJson() {
 function setCompressImageJson(data) {
   return fsp.writeFile(compressedImagesJsonPath, JSON.stringify(data, null, 2), 'utf-8')
 }
+
+function mkdirs(dirname, callback) {
+  fs.access(dirname, (err) => {
+    if (!err) {
+      callback()
+    } else {
+      mkdirs(path.dirname(dirname), () => {
+        fs.mkdir(dirname, callback)
+      })
+    }
+  })
+}
+
+mkdirs('a/b/c', () => {
+  console.log('1')
+})
 
 /**
  * 计算压缩比例，保留两位小数点
@@ -151,4 +169,12 @@ async function startCompress() {
   })
 }
 
-startCompress()
+// startCompress()
+
+// fsp.rename('./assets/ico_refrash@3x.png', './build/ico_refrash@3x.png').then(res => {
+//   console.log(res)
+// })
+
+// fsp.mkdir('./bak_compress/').then(res => {
+//   console.log(res)
+// })
