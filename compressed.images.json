@@ -1,51 +1,99 @@
 {
   "name": "compressed images",
   "version": "1.0.0",
-  "totalSourceFileSize": 3643999,
-  "totalCompressedFileSize": 446084,
-  "compressionRatio": 0.8775,
+  "totalSourceFileSize": 5549689,
+  "totalCompressedFileSize": 569191,
+  "compressionRatio": 0.8974,
   "compressedList": [
     {
-      "sourcePath": "src/135091055349.jpg",
-      "uncompressed": 545033,
-      "compressed": 43862,
-      "ratio": 0.9195
+      "sourcePath": "src/images/10251380282664698.jpg",
+      "uncompressed": 1343294,
+      "compressed": 86719,
+      "ratio": 0.9354
     },
     {
-      "sourcePath": "src/1350912236802.jpg",
-      "uncompressed": 561116,
-      "compressed": 62670,
-      "ratio": 0.8883
+      "sourcePath": "src/images/fef4eadd191c3461054ca60cde8576db1590566398.jpg",
+      "uncompressed": 1675940,
+      "compressed": 128789,
+      "ratio": 0.9231
     },
     {
-      "sourcePath": "src/1351068302550.jpg",
-      "uncompressed": 512472,
-      "compressed": 67089,
-      "ratio": 0.869
+      "sourcePath": "src/images/10251380282781242.jpg",
+      "uncompressed": 1063782,
+      "compressed": 93448,
+      "ratio": 0.9121
     },
     {
-      "sourcePath": "src/1351068491231.jpg",
-      "uncompressed": 488950,
-      "compressed": 64020,
-      "ratio": 0.869
+      "sourcePath": "src/public/ceb8c078cf6b410d7def183870fe584d1590566557.jpg",
+      "uncompressed": 1051130,
+      "compressed": 114781,
+      "ratio": 0.8908
     },
     {
-      "sourcePath": "src/1385453784203.jpg",
-      "uncompressed": 527318,
-      "compressed": 70157,
-      "ratio": 0.8669
+      "sourcePath": "src/images/图层 1.jpg",
+      "uncompressed": 25669,
+      "compressed": 4947,
+      "ratio": 0.8072
     },
     {
-      "sourcePath": "src/1351068419842.jpg",
-      "uncompressed": 489315,
-      "compressed": 65752,
-      "ratio": 0.8656
+      "sourcePath": "src/public/apps.43559.9007199266245973.a4166e79-16a2-4eb2-89ef-ece5c26af02e.png",
+      "uncompressed": 43357,
+      "compressed": 11887,
+      "ratio": 0.7258
     },
     {
-      "sourcePath": "src/1351067833539.jpg",
-      "uncompressed": 519795,
-      "compressed": 72534,
-      "ratio": 0.8604
+      "sourcePath": "src/images/VS@3x.png",
+      "uncompressed": 10803,
+      "compressed": 3205,
+      "ratio": 0.7033
+    },
+    {
+      "sourcePath": "src/public/VS@3x.png",
+      "uncompressed": 10803,
+      "compressed": 3205,
+      "ratio": 0.7033
+    },
+    {
+      "sourcePath": "src/images/ef8e2f1385bce87bf939031adc611b13e9e223ec.jpg",
+      "uncompressed": 69358,
+      "compressed": 23788,
+      "ratio": 0.657
+    },
+    {
+      "sourcePath": "src/images/c70a72467ea423c71c7831d943f9e86d22726e7e.jpg",
+      "uncompressed": 123356,
+      "compressed": 46880,
+      "ratio": 0.6199
+    },
+    {
+      "sourcePath": "src/public/c70a72467ea423c71c7831d943f9e86d22726e7e.jpg",
+      "uncompressed": 123356,
+      "compressed": 46880,
+      "ratio": 0.6199
+    },
+    {
+      "sourcePath": "src/images/60_1618366359613.png",
+      "uncompressed": 7772,
+      "compressed": 3817,
+      "ratio": 0.5088
+    },
+    {
+      "sourcePath": "src/public/图层 4.png",
+      "uncompressed": 247,
+      "compressed": 167,
+      "ratio": 0.3238
+    },
+    {
+      "sourcePath": "src/public/图层 5.png",
+      "uncompressed": 244,
+      "compressed": 166,
+      "ratio": 0.3196
+    },
+    {
+      "sourcePath": "src/public/默认图标@3x.png",
+      "uncompressed": 578,
+      "compressed": 512,
+      "ratio": 0.1141
     }
   ]
 }

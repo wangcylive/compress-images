@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "compress-images": "index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +23,6 @@
   "dependencies": {
     "imagemin": "^8.0.1",
     "imagemin-jpeg-recompress": "^7.0.0",
-    "imagemin-jpegtran": "^7.0.0",
     "imagemin-pngquant": "^9.0.2"
   },
   "engines": {
