@@ -1,13 +1,11 @@
 import imagemin from 'imagemin'
 import imageminJpegRecompress from 'imagemin-jpeg-recompress'
 import imageminPngquant from 'imagemin-pngquant'
-import {getCompressionRatio, getCompressImageJson, setCompressImageJson, mkdirsPromise, formatFileSize, consoleColor, findNotExistent} from './utils'
+import {getCompressionRatio, getCompressImageJson, setCompressImageJson, mkdirsPromise, formatFileSize, consoleColor, findNotExistent} from './utils.js'
 import fsp from 'fs/promises'
 import path from 'path'
 
-console.log(33)
-
-async function startImagemin() {
+async function imageless(backupDir) {
   const files = await imagemin(['src/**/*.{jpg,jpeg,png}'], {
     // destination: 'build/images',
     plugins: [
@@ -61,8 +59,10 @@ async function startImagemin() {
             ratio: getCompressionRatio(data.byteLength, stat.size)
           })
           // 备份原图片
-          await mkdirsPromise(path.join('bak_images', path.dirname(sourcePath)))
-          await fsp.rename(sourcePath, path.join('bak_images', sourcePath))
+          if (backupDir) {
+            await mkdirsPromise(path.join(backupDir, path.dirname(sourcePath)))
+            await fsp.rename(sourcePath, path.join(backupDir, sourcePath))
+          }
           await fsp.writeFile(sourcePath, data).catch(err => {
             console.error('compress error', sourcePath, err)
           })
@@ -104,4 +104,4 @@ async function startImagemin() {
   })
 }
 
-export default startImagemin
+export default imageless
