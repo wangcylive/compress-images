@@ -1,10 +1,11 @@
 import fs from 'fs'
 import fsp from 'fs/promises'
 import path from 'path'
+import pkgJson from './package.json'
 
-export const compressedImagesJsonPath = 'compressed.images.json'
+export const compressedImagesJsonPath = 'imageless.json'
 
-const defaultJson = {name: 'compressed images', version: '1.0.0', totalSourceFileSize: 0, totalCompressedFileSize: 0, compressionRatio: 0, compressedList: []}
+const defaultJson = {name: 'compressed images', version: pkgJson.version, totalSourceFileSize: 0, totalCompressedFileSize: 0, compressionRatio: 0, compressedList: []}
 export function getCompressImageJson() {
   return fsp.readFile(compressedImagesJsonPath, 'utf-8').then(data => {
     let value = defaultJson

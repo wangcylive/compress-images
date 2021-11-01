@@ -1,6 +1,4 @@
 node_modules
 .*
-build
-assets
 src
-bak_images
+_bak_images
