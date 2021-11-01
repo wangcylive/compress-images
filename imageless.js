@@ -90,8 +90,8 @@ async function imageless(needBackup) {
     }))
   })
   Promise.all(promiseArr).then(() => {
-    // 按压缩比例从高到底排序
-    curCompressedList.sort((a, b) => b.ratio - a.ratio)
+    // 按压缩后文件大小从高到底排序
+    curCompressedList.sort((a, b) => b.compressed - a.compressed)
     localData.compressedList = (localData.compressedList || []).concat(curCompressedList)
     let totalSourceFileSize = 0
     let totalCompressedFileSize = 0

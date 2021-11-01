@@ -1,6 +1,6 @@
 {
   "name": "imageless",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "description": "Compress the images in the project without invasion and back up the source files",
   "keywords": [
     "imagemin",
