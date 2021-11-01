@@ -1,18 +1,15 @@
 #!/usr/bin/env node
-import imageless from './main.js'
+import imageless, {deleteImagelessJson} from './imageless.js'
+
 const args = process.argv[2]
-if (['-h', '-help'].includes(args)) {
+if (args === '-h') {
   console.log(`
-usage: minimage
+usage: imageless
   -h help
-  -b [<dir>] Backup source file
+  -d delete imageless.json file
 `)
+} else if (args === '-d') {
+  deleteImagelessJson()
 } else {
-  const needBackup = ['-b', '-backup'].includes(args)
-  const backupDir = process.argv[3] || '_bak_minimage'
-  if (needBackup) {
-    imageless(backupDir)
-  } else {
-    imageless()
-  }
+  imageless(true)
 }

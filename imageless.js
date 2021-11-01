@@ -1,21 +1,31 @@
 import imagemin from 'imagemin'
-import imageminJpegRecompress from 'imagemin-jpeg-recompress'
+import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminPngquant from 'imagemin-pngquant'
-import {getCompressionRatio, getCompressImageJson, setCompressImageJson, mkdirsPromise, formatFileSize, consoleColor, findNotExistent} from './utils.js'
+import {compressedImagesJsonPath, backupDir, getCompressionRatio, getCompressImageJson, setCompressImageJson,
+  formatFileSize, consoleColor, findNotExistent, asyncLoadPkgJson} from './utils.js'
 import fsp from 'fs/promises'
 import path from 'path'
+import makeDir from 'make-dir'
+import md5 from 'md5'
 
-async function imageless(backupDir) {
-  const files = await imagemin(['src/**/*.{jpg,jpeg,png}'], {
+/**
+ * 压缩图片
+ * @param needBackup
+ * @return {Promise<void>}
+ */
+async function imageless(needBackup) {
+  const pkgJson = await asyncLoadPkgJson()
+  let input = pkgJson?.imageless?.input || ['src/**/*.{jpg,jpeg,png}']
+  const files = await imagemin(input, {
     // destination: 'build/images',
     plugins: [
-      imageminJpegRecompress({
-        target: 0.8,
-        min: 60,
-        max: 80,
+      imageminMozjpeg({
+        quality: 70,
+        ...pkgJson?.imageless?.jpegOptions,
       }),
       imageminPngquant({
-        quality: [0.6, 0.8]
+        quality: [0.6, 0.8],
+        ...pkgJson?.imageless?.pngOptions,
       })
     ]
   })
@@ -32,37 +42,42 @@ async function imageless(backupDir) {
       }
     }
   }
-  const compressedPathMap = new Map(compressedList.map(item => [item.sourcePath, item.compressed]))
+  const compressedMd5Map = new Map(compressedList.map(item => [item.sourcePath, item.md5]))
   const curCompressedList = []
   const promiseArr = []
   files.forEach((item) => {
     const {sourcePath, data} = item
     promiseArr.push(new Promise(async (resolve, reject) => {
       try {
-        const stat = await fsp.stat(sourcePath)
+        const oriBuf = await fsp.readFile(sourcePath)
+        const oriFileSize = oriBuf.byteLength
+        const oriMd5 = await md5(oriBuf)
+        const curMd5 = await md5(data)
         /**
-         * 判断本地数据没有保存当前图片的信息（是否有路径，并且文件大小一致），下个版本使用MD5校验
+         * 本地保存数据和未压缩图片md5不一致，说明图片有更新
          * 并且压缩后的文件必须小于源文件
          */
-        if (compressedPathMap.get(sourcePath) !== stat.size && data.byteLength < stat.size) {
+        if (compressedMd5Map.get(sourcePath) !== oriMd5 && data.byteLength < oriFileSize) {
           // 删除重复的数据
-          curCompressedList.some((item, index) => {
+          compressedList.some((item, index) => {
             if (item.sourcePath === sourcePath) {
-              curCompressedList.splice(index, 1)
+              compressedList.splice(index, 1)
               return true
             }
           })
           curCompressedList.push({
             sourcePath,
-            uncompressed: stat.size,
+            md5: curMd5,
+            uncompressed: oriFileSize,
             compressed: data.byteLength,
-            ratio: getCompressionRatio(data.byteLength, stat.size)
+            ratio: getCompressionRatio(data.byteLength, oriFileSize)
           })
           // 备份原图片
-          if (backupDir) {
-            await mkdirsPromise(path.join(backupDir, path.dirname(sourcePath)))
+          if (needBackup) {
+            await makeDir(path.join(backupDir, path.dirname(sourcePath)))
             await fsp.rename(sourcePath, path.join(backupDir, sourcePath))
           }
+          // 覆盖写入
           await fsp.writeFile(sourcePath, data).catch(err => {
             console.error('compress error', sourcePath, err)
           })
@@ -92,10 +107,18 @@ async function imageless(backupDir) {
     if (curCompressedList.length > 0) {
       const curCompressedTotal = curCompressedList.reduce(((previousValue, currentValue) => previousValue + currentValue.compressed), 0)
       console.log(`This compressed file ${consoleColor(curCompressedList.length)}, a total of ${consoleColor(formatFileSize(curCompressedTotal))} reduction`)
-      console.table(curCompressedList)
+      const showTableData = curCompressedList.map(({sourcePath, uncompressed, compressed, ratio}) => {
+        return {
+          path: sourcePath,
+          origin: formatFileSize(uncompressed),
+          current: formatFileSize(compressed),
+          ratio
+        }
+      })
+      console.table(showTableData)
     }
     if (localData.compressedList.length > 0) {
-      console.log(`A total of ${consoleColor(localData.compressedList.length)} images have been compressed, reducing ${consoleColor(formatFileSize(totalSourceFileSize - totalCompressedFileSize))}, with a compression ratio of ${consoleColor(getCompressionRatio(totalCompressedFileSize, totalSourceFileSize) * 100 + '%')}`)
+      console.log(`A total of ${consoleColor(localData.compressedList.length)} images have been compressed, reducing ${consoleColor(formatFileSize(totalSourceFileSize - totalCompressedFileSize))}, with a compression ratio of ${consoleColor(getCompressionRatio(totalCompressedFileSize, totalSourceFileSize))}`)
     } else {
       console.log('There are no images that need to be compressed')
     }
@@ -105,3 +128,11 @@ async function imageless(backupDir) {
 }
 
 export default imageless
+
+/**
+ * 删除 imageless.json
+ * @return {Promise<void>}
+ */
+export function deleteImagelessJson() {
+  return fsp.unlink(compressedImagesJsonPath)
+}

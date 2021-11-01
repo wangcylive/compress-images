@@ -1,12 +1,21 @@
-import fs from 'fs'
 import fsp from 'fs/promises'
 import path from 'path'
-import pkgJson from './package.json'
 
 export const compressedImagesJsonPath = 'imageless.json'
 
-const defaultJson = {name: 'compressed images', version: pkgJson.version, totalSourceFileSize: 0, totalCompressedFileSize: 0, compressionRatio: 0, compressedList: []}
-export function getCompressImageJson() {
+export const backupDir = 'imageless_backup'
+
+export async function asyncLoadPkgJson() {
+  const data = await fsp.readFile(path.join(process.cwd(), 'package.json'), 'utf-8')
+  if (data) {
+    return JSON.parse(data)
+  }
+  return null
+}
+
+export async function getCompressImageJson() {
+  const pkgJson = await asyncLoadPkgJson()
+  const defaultJson = {name: pkgJson.name || 'imageless', version: pkgJson.version || '1.0.0', totalSourceFileSize: 0, totalCompressedFileSize: 0, compressionRatio: 0, compressedList: []}
   return fsp.readFile(compressedImagesJsonPath, 'utf-8').then(data => {
     let value = defaultJson
     try {
@@ -23,34 +32,34 @@ export function setCompressImageJson(data) {
 }
 
 // 创建文件夹目录
-export function mkdirsPromise(dirname) {
-  return new Promise((resolve) => {
-    const mkdirs = (dirname, callback) => {
-      fs.access(dirname, (err) => {
-        if (!err) {
-          callback()
-        } else {
-          mkdirs(path.dirname(dirname), () => {
-            fs.mkdir(dirname, callback)
-          })
-        }
-      })
-    }
-    mkdirs(dirname, resolve)
-  })
-}
+// export function mkdirsPromise(dirname) {
+//   return new Promise((resolve) => {
+//     const mkdirs = (dirname, callback) => {
+//       fs.access(dirname, (err) => {
+//         if (!err) {
+//           callback()
+//         } else {
+//           mkdirs(path.dirname(dirname), () => {
+//             fs.mkdir(dirname, callback)
+//           })
+//         }
+//       })
+//     }
+//     mkdirs(dirname, resolve)
+//   })
+// }
 
 /**
- * 计算压缩比例，保留4位小数点
+ * 计算压缩百分比，保留2位小数点
  * @param compressed
  * @param uncompressed
- * @return {number}
+ * @return {string}
  */
 export function getCompressionRatio(compressed, uncompressed) {
   if (uncompressed === 0) {
-    return 0
+    return '0%'
   }
-  return Math.floor((1 - compressed / uncompressed) * 1e4) / 1e4
+  return Math.floor((1 - compressed / uncompressed) * 1e4) / 1e2 + '%'
 }
 
 export function formatFileSize (value) {

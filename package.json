@@ -1,33 +1,52 @@
 {
   "name": "imageless",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.4",
   "description": "Compress the images in the project without invasion and back up the source files",
-  "keywords": ["imagemin", "compress", "image"],
+  "keywords": [
+    "imagemin",
+    "compress",
+    "image"
+  ],
   "main": "index.js",
   "type": "module",
   "bin": {
     "imageless": "index.js"
-  },
-  "scripts": {
-    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wangcylive/compress-images.git"
   },
   "author": "wangcylive",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wangcylive/compress-images/issues"
+    "url": "https://github.com/wangcylive/imageless/issues"
   },
-  "homepage": "https://github.com/wangcylive/compress-images#readme",
+  "homepage": "https://github.com/wangcylive/imageless#readme",
   "dependencies": {
     "imagemin": "^8.0.1",
     "imagemin-jpeg-recompress": "^7.0.0",
-    "imagemin-pngquant": "^9.0.2"
+    "imagemin-mozjpeg": "^9.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "make-dir": "^3.1.0",
+    "md5": "^2.3.0"
   },
   "engines": {
     "node": ">=12"
   },
-  "files": ["index.js", "utils.js", "main.js", "package.json", "README.md"]
+  "files": [
+    "index.js",
+    "utils.js",
+    "imageless.js",
+    "package.json",
+    "README.md"
+  ],
+  "imageless": {
+    "input": ["src/**/*.jpg"],
+    "jpegOptions": {
+      "quality": 70
+    },
+    "pngOptions": {
+      "quality": [0.6, 0.8]
+    }
+  }
 }
