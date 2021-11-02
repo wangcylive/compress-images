@@ -33,7 +33,7 @@ async function imageless(needBackup) {
   const localData = await getCompressImageJson()
 
   // 过滤掉不存在的文件
-  const compressedList = localData.compressedList || []
+  const compressedList = localData?.compressedList || []
   const notExistent = await findNotExistent(compressedList)
   if (notExistent.length > 0) {
     for (let i = compressedList.length - 1; i >= 0; i--) {
@@ -137,4 +137,13 @@ export function deleteImagelessJson() {
   return fsp.unlink(compressedImagesJsonPath).catch((err) => {
     console.error('unlink', err)
   })
+}
+
+/**
+ * 获取版本号
+ * @return {Promise<void>}
+ */
+export async function getVersion () {
+  const json = JSON.parse(await fsp.readFile(new URL('./package.json', import.meta.url)))
+  console.log(json.version)
 }

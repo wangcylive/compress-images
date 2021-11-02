@@ -28,6 +28,10 @@ imageless
 imageless -d
 ```
 删除 *imageless.json* 文件
+```
+imageless -v
+```
+查看版本
 
 ### 配置
 *package.json* 可进行相关配置，以下为默认配置项
