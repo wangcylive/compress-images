@@ -6,7 +6,9 @@ export const compressedImagesJsonPath = 'imageless.json'
 export const backupDir = 'imageless_backup'
 
 export async function asyncLoadPkgJson() {
-  const data = await fsp.readFile(path.join(process.cwd(), 'package.json'), 'utf-8')
+  const data = await fsp.readFile(path.join(process.cwd(), 'package.json'), 'utf-8').catch(() => {
+    return null
+  })
   if (data) {
     return JSON.parse(data)
   }

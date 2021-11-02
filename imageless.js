@@ -134,5 +134,7 @@ export default imageless
  * @return {Promise<void>}
  */
 export function deleteImagelessJson() {
-  return fsp.unlink(compressedImagesJsonPath)
+  return fsp.unlink(compressedImagesJsonPath).catch((err) => {
+    console.error('unlink', err)
+  })
 }
