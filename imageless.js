@@ -7,6 +7,7 @@ import fsp from 'fs/promises'
 import path from 'path'
 import makeDir from 'make-dir'
 import md5 from 'md5'
+import imageSize from 'image-size'
 
 /**
  * 压缩图片
@@ -15,7 +16,7 @@ import md5 from 'md5'
  */
 async function imageless(needBackup) {
   const pkgJson = await asyncLoadPkgJson()
-  let input = pkgJson?.imageless?.input || ['src/**/*.{jpg,jpeg,png}']
+  const input = pkgJson?.imageless?.input || ['src/**/*.{jpg,jpeg,png}']
   const files = await imagemin(input, {
     // destination: 'build/images',
     plugins: [
@@ -29,6 +30,10 @@ async function imageless(needBackup) {
       })
     ]
   })
+  let minSize = 1024 * 6 // 默认大于等于6KB的文件才会压缩
+  if (pkgJson?.imageless?.minSize >= 0) {
+    minSize = pkgJson.imageless.minSize
+  }
 
   const localData = await getCompressImageJson()
 
@@ -53,11 +58,13 @@ async function imageless(needBackup) {
         const oriFileSize = oriBuf.byteLength
         const oriMd5 = await md5(oriBuf)
         const curMd5 = await md5(data)
+        const {width, height} = await imageSize(oriBuf)
         /**
          * 本地保存数据和未压缩图片md5不一致，说明图片有更新
-         * 并且压缩后的文件必须小于源文件
+         * 压缩后的文件必须小于源文件
+         * 源文件大小大于设置的最小文件大小
          */
-        if (compressedMd5Map.get(sourcePath) !== oriMd5 && data.byteLength < oriFileSize) {
+        if (compressedMd5Map.get(sourcePath) !== oriMd5 && data.byteLength < oriFileSize && oriFileSize > minSize) {
           // 删除重复的数据
           compressedList.some((item, index) => {
             if (item.sourcePath === sourcePath) {
@@ -70,6 +77,7 @@ async function imageless(needBackup) {
             md5: curMd5,
             uncompressed: oriFileSize,
             compressed: data.byteLength,
+            dimension: `${width}x${height}`,
             ratio: getCompressionRatio(data.byteLength, oriFileSize)
           })
           // 备份原图片
@@ -91,7 +99,7 @@ async function imageless(needBackup) {
   })
   Promise.all(promiseArr).then(() => {
     // 按压缩后文件大小从高到底排序
-    curCompressedList.sort((a, b) => b.compressed - a.compressed)
+    curCompressedList.sort((a, b) => Number.parseFloat(b.ratio) - Number.parseFloat(a.ratio))
     localData.compressedList = (localData.compressedList || []).concat(curCompressedList)
     let totalSourceFileSize = 0
     let totalCompressedFileSize = 0
@@ -103,15 +111,17 @@ async function imageless(needBackup) {
     localData.totalSourceFileSize = totalSourceFileSize
     localData.totalCompressedFileSize = totalCompressedFileSize
     localData.compressionRatio = compressionRatio
+    localData.time = new Date().toUTCString()
     setCompressImageJson(localData)
     if (curCompressedList.length > 0) {
       const curCompressedTotal = curCompressedList.reduce(((previousValue, currentValue) => previousValue + currentValue.compressed), 0)
       console.log(`This compressed file ${consoleColor(curCompressedList.length)}, a total of ${consoleColor(formatFileSize(curCompressedTotal))} reduction`)
-      const showTableData = curCompressedList.map(({sourcePath, uncompressed, compressed, ratio}) => {
+      const showTableData = curCompressedList.map(({sourcePath, uncompressed, compressed, ratio, dimension}) => {
         return {
           path: sourcePath,
           origin: formatFileSize(uncompressed),
           current: formatFileSize(compressed),
+          dimension,
           ratio
         }
       })
@@ -146,4 +156,32 @@ export function deleteImagelessJson() {
 export async function getVersion () {
   const json = JSON.parse(await fsp.readFile(new URL('./package.json', import.meta.url)))
   console.log(json.version)
+}
+
+/**
+ * 还原文件
+ * @return {Promise<void>}
+ */
+export async function restoreImages() {
+  const data = await getCompressImageJson()
+  const promiseArr = []
+  data?.compressedList?.forEach(({sourcePath}) => {
+    promiseArr.push(fsp.rename(path.join(backupDir, sourcePath), sourcePath).then(() => {
+      // 还原成功删除 compressList 保存的数据
+      data.compressedList.some((item, index, array) => {
+        if (item.sourcePath === sourcePath) {
+          array.splice(index, 1)
+          return true
+        }
+      })
+    }).catch((e) => {
+      throw sourcePath
+    }))
+  })
+  const results = await Promise.allSettled(promiseArr)
+  data.time = new Date().toUTCString()
+  setCompressImageJson(data)
+  const successTotal = results.filter((result) => result.status === 'fulfilled').length
+  const failTotal = results.length - successTotal
+  console.log(`A total of ${consoleColor(successTotal)} files were restored${failTotal > 0 && ' and ' + consoleColor(failTotal) + ' failed'}`)
 }

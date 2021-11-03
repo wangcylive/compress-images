@@ -1,11 +1,13 @@
 # imageless
 一行命令对项目中的所有图像进行压缩，并对源文件进行备份，可重复执行，不破坏项目结构和源代码。
 
-对比 *image-minimizer-webpack-plugin* 不需要每次构建都压缩，减少发布的时间。
+全局安装，零配置，所有项目可以使用。
+
+对比 *image-minimizer-webpack-plugin* 不需要每次构建都压缩，减少发布的时间；可以选择过滤某些文件或某个文件夹。
 
 生成 *imageless.json* 文件作为压缩记录。
 
-比较压缩前和压缩后的文件，压缩后文件变小才会起作用。
+比较压缩前后的文件，保证压缩后文件一定变小。
 
 压缩文件使用 md5 判断，避免重复压缩。
 
@@ -32,9 +34,13 @@ imageless -d
 imageless -v
 ```
 查看版本
+```
+imageless -r
+```
+还原压缩文件
 
 ### 配置
-*package.json* 可进行相关配置，以下为默认配置项
+*package.json* 可进行 <code>imageless</code> 相关配置，以下为默认配置项
 ```json
 {
   "imageless": {
@@ -44,7 +50,8 @@ imageless -v
     },
     "pngOptions": {
       "quality": [0.6, 0.8]
-    }
+    },
+    "minSize": 6144
   }
 }
 ```
@@ -58,3 +65,6 @@ imageless -v
 
 #### pngOptions
 使用 [imagemin-pngquant](https://www.npmjs.com/package/imagemin-pngquant) 的 options，可设置 *png* 格式图片的压缩选项。<code>quality</code>设置压缩质量，格式<code>Array<min: number, max: number></code>，默认值 <code>[0.6, 0.8]</code>
+
+#### minSize
+大于等于 <code>minSize</code> 大小的图片才会被压缩，设置 *0* 所有的图片都压缩，默认 *6KB*

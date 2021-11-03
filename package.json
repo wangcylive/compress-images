@@ -1,6 +1,6 @@
 {
   "name": "imageless",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Compress the images in the project without invasion and back up the source files",
   "keywords": [
     "imagemin",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wangcylive/compress-images.git"
+    "url": "git+https://github.com/wangcylive/imageless.git"
   },
   "author": "wangcylive",
   "license": "MIT",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/wangcylive/imageless#readme",
   "dependencies": {
+    "image-size": "^1.0.0",
     "imagemin": "^8.0.1",
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-mozjpeg": "^9.0.0",
@@ -31,7 +32,7 @@
     "md5": "^2.3.0"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "files": [
     "index.js",
@@ -41,12 +42,17 @@
     "README.md"
   ],
   "imageless": {
-    "input": ["src/**/*.jpg"],
+    "input": [
+      "src/**/*.jpg"
+    ],
     "jpegOptions": {
       "quality": 70
     },
     "pngOptions": {
-      "quality": [0.6, 0.8]
+      "quality": [
+        0.6,
+        0.8
+      ]
     }
   }
 }
