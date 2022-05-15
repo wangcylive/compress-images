@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-import imageless, {deleteImagelessJson, getVersion, restoreImages} from './imageless.js'
+import {tinifyImages, imageless, deleteImagelessJson, getVersion, restoreImages} from './imageless.js'
 
 const args = process.argv[2]
 if (args === '-h') {
   console.log(`
 usage: imageless
+  -l imagemin local
   -h help
   -d delete imageless.json file
   -v imageless version
@@ -16,6 +17,8 @@ usage: imageless
   getVersion()
 } else if (args === '-r') {
   restoreImages()
-} else {
+} else if (args === '-l') {
   imageless(true)
+} else {
+  tinifyImages(true)
 }

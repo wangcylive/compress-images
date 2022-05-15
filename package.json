@@ -1,9 +1,10 @@
 {
   "name": "imageless",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Compress the images in the project without invasion and back up the source files",
   "keywords": [
     "imagemin",
+    "tinify",
     "compress",
     "image"
   ],
@@ -23,13 +24,15 @@
   },
   "homepage": "https://github.com/wangcylive/imageless#readme",
   "dependencies": {
+    "globby": "^13.1.1",
     "image-size": "^1.0.0",
     "imagemin": "^8.0.1",
     "imagemin-jpeg-recompress": "^7.0.0",
     "imagemin-mozjpeg": "^9.0.0",
     "imagemin-pngquant": "^9.0.2",
     "make-dir": "^3.1.0",
-    "md5": "^2.3.0"
+    "md5": "^2.3.0",
+    "tinify": "^1.6.1"
   },
   "engines": {
     "node": ">=14"
@@ -43,8 +46,9 @@
   ],
   "imageless": {
     "input": [
-      "src/**/*.jpg"
+      "src/**/*.{jpg,jpeg,png}"
     ],
+    "minSize": 1024,
     "jpegOptions": {
       "quality": 70
     },
