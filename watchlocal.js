@@ -6,6 +6,7 @@ const tinifyFileName = 'tinify' // 压缩后的文件名称添加标识
 const watchIgnore = /ignore/ // 忽略
 const minSize = 1024 * 5 // 大于 5kb压缩
 const tinifyKeys = ['NpmW5gDcjz1WgMg7JLJMwLZ26Gps7clY', 'mh1DJYXnv2nVG9PVpkFvhVNssFgMtpn5'] // outlook, gmail
+const fileType = /\.(jpe?g|png|webp)$/ // 支持压缩文件类型
 
 // 记录正在压缩中的图片
 const tinifyCompressingSet = new Set()
@@ -26,7 +27,7 @@ function setTinifyKey(update = false) {
 async function tinifyImg(path, stats) {
   setTinifyKey()
   const [filePath, fileSuffix] = path.split(/\.(?=[^.]+$)/)
-  if (!/\.(jpe?g|png|gif)$/.test(path)) {
+  if (!fileType.test(path)) {
     return
   }
   if (tinifyCompressingSet.has(path)) {
