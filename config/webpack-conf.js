@@ -1,7 +1,11 @@
-const path = require('path')
-const webpack = require('webpack')
-const nodeExternals = require('webpack-node-externals')
-const { isProd, ip, getProjectEnv } = require('./env')
+import path from 'path'
+import {fileURLToPath} from 'url'
+import webpack from 'webpack'
+import nodeExternals from 'webpack-node-externals'
+import {isProd, ip, getProjectEnv} from './env.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename);
 
 function webpackConf() {
   const node = {
@@ -60,4 +64,4 @@ function webpackConf() {
   }
 }
 
-module.exports = webpackConf
+export default webpackConf

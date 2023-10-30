@@ -37,7 +37,7 @@
     "tinify": "^1.7.1"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "files": [
     "index.js",
