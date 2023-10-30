@@ -1,6 +1,5 @@
-import webpackConf from './webpack-conf.js'
+const webpackConf = require('./webpack-conf')
 
-const run = (env) => webpackConf(env)
-
-export default run
-
+module.exports = (env) => {
+  return webpackConf()
+}
